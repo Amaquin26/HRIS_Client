@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { Home } from './pages/home/home';
-import { EntraUsers } from './pages/entra-users/entra-users';
+import { EntraUsersPage } from './pages/entra-users/entra-users-page';
 
 export const routes: Routes = [
     {
@@ -10,6 +10,6 @@ export const routes: Routes = [
     },
     {
         path: "entra-users",
-        component: EntraUsers
+        component: EntraUsersPage
     }
 ];

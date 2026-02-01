@@ -1,0 +1,70 @@
+<p-dialog header="Create Employee Record" [modal]="true" [visible]="visible()" [style]="{ width: '45rem' }" (visibleChange)="onVisibleChange($event)">
+    @if(!entraUser()){
+        <span class="p-text-secondary block mb-8">Please select an Entra User in the list to create an employee record.</span>
+    }
+    @else {
+        <span class="p-text-secondary block mb-8">Create employee record with the select Entra User.</span>
+        <form [formGroup]="employeeRecordForm">
+            <div class="mb-8">
+                <div class="grid grid-cols-[8rem_1fr] gap-4 items-center">
+                    <label for="firstName" class="font-semibold w-32">First name *</label>
+                    <input pInputText id="firstName" class="flex-auto" autocomplete="off" formControlName="firstName"/> 
+                </div>
+                @if (employeeRecordForm.controls.firstName.hasError('required')) {
+                    <p class="text-sm text-red-500 my-1">First name is required!</p>
+                }
+            </div>
+            <div class="mb-8">
+                <div class="grid grid-cols-[8rem_1fr] gap-4 items-center">
+                    <label for="lastName" class="font-semibold w-32">Last name *</label>
+                    <input pInputText id="lastName" class="flex-auto" autocomplete="off" formControlName="lastName"/>                  
+                </div>
+                @if (employeeRecordForm.controls.lastName.hasError('required')) {
+                    <p class="text-sm text-red-500 my-1">Last name is required!</p>
+                }
+            </div>
+            <div class="mb-8">
+                <div class="grid grid-cols-[8rem_1fr] gap-4 items-center">
+                    <label for="email" class="font-semibold w-32">Email *</label>
+                    <input pInputText id="email" type="email" class="flex-auto" autocomplete="off" formControlName="email"/>                  
+                </div>
+                @if (employeeRecordForm.controls.email.hasError('required')) {
+                    <p class="text-sm text-red-500 my-1">Email is required!</p>
+                }
+                @if (employeeRecordForm.controls.email.hasError('email')) {
+                    <p class="text-sm text-red-500 my-1">Must be a valid email!</p>
+                }
+            </div>
+            <div class="mb-8">
+                <div class="grid grid-cols-[8rem_1fr] gap-4 items-center">
+                    <label for="contactNumber" class="font-semibold w-32">Contact Number</label>
+                    <input pInputText id="contactNumber" class="flex-auto" autocomplete="off" formControlName="contactNumber"/>                  
+                </div>
+            </div>
+            <div class="mb-8">
+                <div class="grid grid-cols-[8rem_1fr] gap-4 items-center">
+                    <label for="contactNumber" class="font-semibold w-32">Hired Date *</label>    
+                    <p-datepicker [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" formControlName="hireDate" class="w-full"/>           
+                </div>
+                @if (employeeRecordForm.controls.hireDate.hasError('required')) {
+                    <p class="text-sm text-red-500 my-1">Hired Date is required!</p>
+                }
+            </div>
+            <div class="mb-8">
+                <div class="grid grid-cols-[8rem_1fr] gap-4 items-center">
+                    <label for="contactNumber" class="font-semibold w-32">Status *</label>
+                    <p-select [options]="employeeStatuses()" optionLabel="name" optionValue="id" formControlName="employeeStatusId" class="w-full"/>                  
+                </div>
+                @if (employeeRecordForm.controls.employeeStatusId.hasError('required')) {
+                    <p class="text-sm text-red-500 my-1">Employee Status is required!</p>
+                }
+            </div>
+        </form>
+    }
+    <div class="flex justify-end gap-2">
+        <p-button label="Cancel" severity="secondary" (click)="onVisibleChange(false)" />
+        @if(entraUser()){
+            <p-button label="Save" (click)="onFormSubmit()" [disabled]="employeeRecordForm.invalid"/>
+        }
+    </div>
+</p-dialog>
