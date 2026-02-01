@@ -6,6 +6,7 @@ import { EntraUser } from '../../models/entra-user/entra-user.model';
 import { PaginationQuery } from '../../models/pagination/pagination-query.model';
 import { environment } from '../../../enviroments/environment';
 import { AddEmployeeRecord } from '../../models/employee/add-employee-record';
+import { EmployeeDto } from '../../models/employee/employee.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,17 @@ export class EmployeeService {
   private readonly employeeApi = `${environment.employeeApiBaseUrl}/Employee`;
 
   private readonly httpClient = inject(HttpClient);
+
+  getEmployeesPaginated(pagination: PaginationQuery): Observable<PaginatedItems<EmployeeDto>> {
+    let params = new HttpParams()
+    .set('searchTerm', pagination.searchTerm ?? '')
+    .set('pageNumber', pagination.pageNumber)
+    .set('pageSize', pagination.pageSize);
+
+    return this.httpClient.get<PaginatedItems<EmployeeDto>>(`${this.employeeApi}/paginated/result`, {
+      params
+    });
+  }
 
   getGraphUsersPaginated(pagination: PaginationQuery): Observable<PaginatedItems<EntraUser>> {
     let params = new HttpParams()

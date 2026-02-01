@@ -61,14 +61,6 @@ export class EntraUsersPage implements OnInit {
     this.getGraphUsersPaginated();
   }
 
-  onPageSizeChange() {
-    this.getGraphUsersPaginated();
-  }
-
-  onSearchTermChange() {
-    this.getGraphUsersPaginated();
-  }
-
   onLoadMore() {
     this.getGraphUsersPaginated(true);
   }

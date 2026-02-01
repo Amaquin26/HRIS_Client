@@ -11,7 +11,7 @@
                 placeholder="Search" 
                 class="w-full sm:w-3/4 md:w-1/2"
                 [(ngModel)] = "searchTerm"
-                (ngModelChange)="onSearchTermChange()"
+                (ngModelChange)="getGraphUsersPaginated()"
             />
         </p-iconfield>
 
@@ -48,7 +48,7 @@
         </p-table>
         <div class="mt-4 flex items-center gap-2 justify-end">
             <p>Items per page:</p>
-            <p-select [options]="pageSizes" [(ngModel)]="pageSize" (onChange)="onPageSizeChange()" placeholder="Select a Page Size" class="w-24" />
+            <p-select [options]="pageSizes" [(ngModel)]="pageSize" (onChange)="getGraphUsersPaginated()" placeholder="Select a Page Size" class="w-24" />
         </div>
         @if(skipToken()){
             <div class="my-4 flex justify-center items-center">

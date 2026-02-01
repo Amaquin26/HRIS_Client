@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Home } from './pages/home/home';
-import { EntraUsersPage } from './pages/entra-users/entra-users-page';
+import { EntraUsersPage } from './pages/entra-users-page/entra-users-page';
+import { EmployeesPage } from './pages/employees-page/employees-page';
 
 export const routes: Routes = [
     {
@@ -11,5 +12,9 @@ export const routes: Routes = [
     {
         path: "entra-users",
         component: EntraUsersPage
+    },
+    {
+        path: "employees",
+        component: EmployeesPage
     }
 ];
