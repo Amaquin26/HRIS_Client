@@ -131,13 +131,11 @@ export class EntraUsersPage implements OnInit {
           });
         },
         error: (err) => {
-          if (err?.error) {
-            this.messageService.add({
-              severity: 'error',
-              summary: err.error?.title ?? 'An error occured',
-              detail: err.error.detail ?? 'Something went wrong while processing your request.',
-            });
-          }
+          this.messageService.add({
+            severity: 'error',
+            summary: err?.error?.title ?? 'An error occured',
+            detail: err?.error.detail ?? 'Something went wrong while processing your request.',
+          });
         },
       });
   }

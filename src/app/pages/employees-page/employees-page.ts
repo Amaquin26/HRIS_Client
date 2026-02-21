@@ -14,6 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { FormatDatePipe } from '../../pipes/format-date/format-date-pipe';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-employees-page',
@@ -27,16 +28,16 @@ import { FormatDatePipe } from '../../pipes/format-date/format-date-pipe';
     InputIconModule,
     FormsModule,
     PaginatorModule,
-    FormatDatePipe
+    FormatDatePipe,
   ],
   templateUrl: './employees-page.html',
   styleUrl: './employees-page.css',
-  providers: [MessageService]
+  providers: [MessageService],
 })
-export class EmployeesPage implements OnInit{
+export class EmployeesPage implements OnInit {
   private readonly employeeService = inject(EmployeeService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly messageService = inject(MessageService);
+  private readonly router = inject(Router);
 
   employees = signal<EmployeeDto[]>([]);
 
@@ -49,30 +50,31 @@ export class EmployeesPage implements OnInit{
   pageSizes = [10, 20, 30, 50];
 
   ngOnInit(): void {
-      this.getEmployees();
+    this.getEmployees();
   }
 
-  getEmployees(){
+  getEmployees() {
     this.isTableLoading.set(true);
 
-    this.employeeService.getEmployeesPaginated({
-      pageNumber: this.pageNumber,
-      pageSize: this.pageSize,
-      searchTerm: this.searchTerm
-    })
-    .pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.isTableLoading.set(false))
-    )
-    .subscribe({
-      next: (result) => {
-        this.employees.set(result.items);
-        this.totalRecords.set(result.totalRecords)
-      }
-    })
+    this.employeeService
+      .getEmployeesPaginated({
+        pageNumber: this.pageNumber,
+        pageSize: this.pageSize,
+        searchTerm: this.searchTerm,
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isTableLoading.set(false)),
+      )
+      .subscribe({
+        next: (result) => {
+          this.employees.set(result.items);
+          this.totalRecords.set(result.totalRecords);
+        },
+      });
   }
 
-  onSearchTermChange(){
+  onSearchTermChange() {
     this.pageNumber = 1;
     this.getEmployees();
   }
@@ -82,5 +84,9 @@ export class EmployeesPage implements OnInit{
     this.pageSize = event.rows ?? 10;
 
     this.getEmployees();
+  }
+
+  navigateToEmployeeProfile(id: number) {
+    this.router.navigate(['employees', id]);
   }
 }

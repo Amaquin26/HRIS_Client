@@ -42,7 +42,11 @@
           <td>{{ employee.contactNumber }}</td>
           <td>{{ employee.hireDate | formatDate: 'MMM dd, yyyy' }}</td>
           <td>{{ employee.employeeStatusName }}</td>
-          <td></td>
+          <td>
+            <button pButton size="small" (click)="navigateToEmployeeProfile(employee.id)">
+              <i class="pi pi-eye" pButtonIcon></i>
+            </button>
+          </td>
         </tr>
       </ng-template>
     </p-table>
@@ -54,7 +58,9 @@
         [totalRecords]="totalRecords()"
         [rowsPerPageOptions]="pageSizes"
         [showCurrentPageReport]="true"
-        [currentPageReportTemplate]="`Showing ${((pageNumber - 1) * pageSize) + 1} to ${(pageNumber * pageSize) > totalRecords() ? totalRecords() : pageNumber * pageSize} of ${totalRecords()}`"
+        [currentPageReportTemplate]="
+          `Showing ${(pageNumber - 1) * pageSize + 1} to ${pageNumber * pageSize > totalRecords() ? totalRecords() : pageNumber * pageSize} of ${totalRecords()}`
+        "
       />
     </div>
   </p-card>

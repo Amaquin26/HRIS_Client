@@ -1,0 +1,126 @@
+<h3 class="text-2xl font-semibold">Employee Profile</h3>
+
+<div class="mt-6">
+  <div class="flex gap-4 w-full">
+    <p-card class="basis-1/4">
+      <div class="flex justify-center">
+        <div>
+          <div class="image-wrapper max-w-56">
+            <p-image
+              src="https://m.media-amazon.com/images/M/MV5BYjc5MDFmODEtOTA3ZS00YjE3LWE3NjMtYjUxZTVlNWNiNzFjXkEyXkFqcGdeQXRyYW5zY29kZS13b3JrZmxvdw@@._V1_.jpg"
+              alt=""
+              [preview]="true"
+              imageClass="circle-image"
+              class="h-full w-full"
+            ></p-image>
+          </div>
+          <div class="mt-4 flex justify-center">
+            <p-fileupload
+              mode="basic"
+              name="profilePicture[]"
+              chooseIcon="pi pi-upload"
+              accept="image/*"
+              maxFileSize="1000000"
+              (onUpload)="onProfileUpload($event)"
+              [auto]="true"
+              chooseLabel="Upload Profile"
+            />
+          </div>
+        </div>
+      </div>
+    </p-card>
+    <p-card class="flex-1" header="Details">
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <p-floatlabel variant="on">
+          <input
+            [readOnly]="true"
+            id="firstName"
+            pInputText
+            autocomplete="off"
+            class="w-full"
+            [value]="employeeRecord()?.firstName"
+          />
+          <label for="firstName">First Name</label>
+        </p-floatlabel>
+        <p-floatlabel variant="on">
+          <input
+            [readOnly]="true"
+            id="lastName"
+            pInputText
+            autocomplete="off"
+            class="w-full"
+            [value]="employeeRecord()?.lastName"
+          />
+          <label for="lastName">Last Name</label>
+        </p-floatlabel>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <p-floatlabel variant="on">
+          <input
+            [readOnly]="true"
+            id="email"
+            pInputText
+            autocomplete="off"
+            class="w-full"
+            type="email"
+            [value]="employeeRecord()?.email"
+          />
+          <label for="email">Email</label>
+        </p-floatlabel>
+        <p-floatlabel variant="on">
+          <input
+            [readOnly]="true"
+            id="contactNumber"
+            pInputText
+            autocomplete="off"
+            class="w-full"
+            [value]="employeeRecord()?.contactNumber"
+          />
+          <label for="contactNumber">Contact Number</label>
+        </p-floatlabel>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <p-floatlabel variant="on">
+          <input
+            [readOnly]="true"
+            id="status"
+            pInputText
+            autocomplete="off"
+            class="w-full"
+            [value]="employeeRecord()?.employeeStatusName"
+          />
+          <label for="status">Status</label>
+        </p-floatlabel>
+        <p-floatlabel variant="on">
+          <input
+            [readOnly]="true"
+            id="hireDate"
+            pInputText
+            autocomplete="off"
+            class="w-full"
+            [value]="employeeRecord()?.hireDate"
+          />
+          <label for="hireDate">Hired Date</label>
+        </p-floatlabel>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <p-floatlabel variant="on">
+          <input
+            [readOnly]="true"
+            id="employeeNumber"
+            pInputText
+            autocomplete="off"
+            class="w-full"
+            [value]="employeeRecord()?.employeeNumber"
+          />
+          <label for="employeeNumber">Employee Number</label>
+        </p-floatlabel>
+        <p-floatlabel variant="on">
+          <input [readOnly]="true" id="jobTitle" pInputText autocomplete="off" class="w-full" />
+          <label for="jobTitle">Job Title</label>
+        </p-floatlabel>
+      </div>
+    </p-card>
+  </div>
+</div>
+<p-toast />
