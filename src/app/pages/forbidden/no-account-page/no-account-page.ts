@@ -1,23 +1,20 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 import { Store } from '@ngxs/store';
-import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-import { ToolbarModule } from 'primeng/toolbar';
 import { ClearUser } from '../../../states/auth.state';
 
 @Component({
-  selector: 'app-header',
-  imports: [ToolbarModule, ButtonModule, AvatarModule, RouterLink],
-  templateUrl: './header.html',
-  styleUrl: './header.css',
+  selector: 'app-no-account-page',
+  imports: [ButtonModule],
+  templateUrl: './no-account-page.html',
+  styleUrl: './no-account-page.css',
 })
-export class Header {
-  private readonly store = inject(Store);
+export class NoAccountPage {
   private readonly msalService = inject(MsalService);
+  private readonly store = inject(Store);
 
-  logout() {
+  onLogout() {
     this.store.dispatch(new ClearUser());
     this.msalService.logoutRedirect();
   }

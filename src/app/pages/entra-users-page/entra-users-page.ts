@@ -134,7 +134,7 @@ export class EntraUsersPage implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: err?.error?.title ?? 'An error occured',
-            detail: err?.error.detail ?? 'Something went wrong while processing your request.',
+            detail: err?.error?.detail ?? 'Something went wrong while processing your request.',
           });
         },
       });

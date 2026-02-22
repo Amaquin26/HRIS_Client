@@ -81,14 +81,18 @@
             fill="var(--ground-background)"
           />
         </svg>
-        <p-button label="Files" text plain />
-        <p-button label="Edit" text plain />
-        <p-button label="View" text plain />
+        <a class="px-2 font-medium cursor-pointer hover:opacity-80" [routerLink]="['']">Home</a>
+        <a class="px-2 font-medium cursor-pointer hover:opacity-80" [routerLink]="['entra-users']"
+          >Entra Users</a
+        >
+        <a class="px-2 font-medium cursor-pointer hover:opacity-80" [routerLink]="['employees']"
+          >Employees</a
+        >
       </div>
     </ng-template>
     <ng-template #end>
       <div class="flex items-center gap-2">
-        <p-button label="Share" severity="contrast" size="small" />
+        <p-button label="Logout" severity="contrast" size="small" (onClick)="logout()" />
         <p-avatar
           image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
           [style]="{ width: '32px', height: '32px' }"
