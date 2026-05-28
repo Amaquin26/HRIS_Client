@@ -122,5 +122,15 @@
       </div>
     </p-card>
   </div>
+  <p-card class="mt-4 w-full">
+    @if (employeeSchedule()) {
+      <app-employee-schedule
+        [employeeSchedule]="employeeSchedule()!"
+        (scheduleDaysAdded)="onScheduleDaysAdded($event)"
+      />
+    } @else {
+      <p>No Employee Schedule</p>
+    }
+  </p-card>
 </div>
 <p-toast />

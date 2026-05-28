@@ -17,6 +17,7 @@ import { AuthInterceptor } from './shared/interceptor/auth-interceptor/auth-inte
 import { provideStore } from '@ngxs/store';
 import { AuthState } from './states/auth.state';
 import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
+import { MessageService } from 'primeng/api';
 
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication(msalConfig);
@@ -24,6 +25,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    MessageService,
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi(), withInterceptors([AuthInterceptor])),

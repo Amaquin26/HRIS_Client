@@ -1,0 +1,162 @@
+<p-toast />
+
+@if (!employeeSchedule().scheduleDays || employeeSchedule().scheduleDays.length !== 7) {
+  <div class="empty-state">
+    <i class="pi pi-calendar" style="font-size: 2.5rem; color: var(--text-color-secondary)"></i>
+    <p class="empty-title">No schedule days set</p>
+    <p class="empty-subtitle">Set up the weekly schedule to get started.</p>
+    <p-button
+      label="Set up schedule"
+      icon="pi pi-plus"
+      size="small"
+      (onClick)="openSetupDialog()"
+    />
+  </div>
+} @else {
+  <div class="schedule-container">
+    <div class="schedule-header">
+      <div>
+        <div class="flex items-center gap-1">
+          <span class="schedule-title">Weekly Schedule</span>
+          <p-tag [value]="activeDaysCount + ' active days'" severity="success" [rounded]="true" />
+        </div>
+        <div>
+          <span class="break-note">
+            <i class="pi pi-info-circle" style="margin-right: 4px"></i>
+            Lunch break ({{ employeeSchedule().breakMinutes }} min) excluded from hours
+          </span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        @if (isEditMode) {
+          <p-button
+            label="Save"
+            icon="pi pi-check"
+            size="small"
+            severity="success"
+            (onClick)="saveAllEdits()"
+          />
+          <p-button
+            label="Cancel"
+            size="small"
+            severity="danger"
+            [text]="true"
+            (onClick)="cancelAllEdits()"
+          />
+        } @else {
+          <p-button
+            label="Edit"
+            icon="pi pi-pencil"
+            size="small"
+            severity="secondary"
+            (onClick)="enterEditMode()"
+          />
+        }
+      </div>
+    </div>
+
+    <p-divider />
+
+    <p-table
+      [value]="employeeSchedule().scheduleDays"
+      [tableStyle]="{ 'min-width': '600px' }"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 130px">Day</th>
+          <th>Time in</th>
+          <th>Time out</th>
+          <th style="width: 120px; text-align: center">Crosses Midnight</th>
+          <th style="width: 100px; text-align: center">Rest day</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-day>
+        <tr [class.rest-day-row]="day.isRestDay">
+          <td>
+            <div class="day-cell">
+              <span class="day-name" [class.muted]="day.isRestDay">{{ day.dayName }}</span>
+            </div>
+          </td>
+
+          <td>
+            @if (isEditMode) {
+              <p-datepicker
+                [(ngModel)]="editingDays[day.id].startTime"
+                [timeOnly]="true"
+                hourFormat="12"
+                [showIcon]="true"
+                icon="pi pi-clock"
+                styleClass="w-full"
+                [disabled]="editingDays[day.id].isRestDay"
+              />
+            } @else {
+              <span class="time-value" [class.muted]="day.isRestDay">
+                {{ day.isRestDay ? '—' : (day.startTime | formatTimePipe) }}
+              </span>
+            }
+          </td>
+
+          <td>
+            @if (isEditMode) {
+              <p-datepicker
+                [(ngModel)]="editingDays[day.id].endTime"
+                [timeOnly]="true"
+                hourFormat="12"
+                [showIcon]="true"
+                icon="pi pi-clock"
+                styleClass="w-full"
+                [disabled]="editingDays[day.id].isRestDay"
+              />
+            } @else {
+              <span class="time-value" [class.muted]="day.isRestDay">
+                {{ day.isRestDay ? '—' : (day.endTime | formatTimePipe) }}
+              </span>
+            }
+          </td>
+
+          <td style="text-align: center">
+            <p-checkbox
+              [ngModel]="isEditMode ? editingDays[day.id].crossesMidnight : day.crossesMidnight"
+              (ngModelChange)="isEditMode && (editingDays[day.id].crossesMidnight = $event)"
+              [binary]="true"
+              [readonly]="!isEditMode"
+              [disabled]="isEditMode ? editingDays[day.id].isRestDay : day.isRestDay"
+            />
+          </td>
+
+          <td style="text-align: center">
+            <p-checkbox
+              [ngModel]="isEditMode ? editingDays[day.id].isRestDay : day.isRestDay"
+              (ngModelChange)="isEditMode && (editingDays[day.id].isRestDay = $event)"
+              [binary]="true"
+              [readonly]="!isEditMode"
+            />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="6">
+            <div class="footer-summary">
+              <span
+                >Total working days: <strong>{{ activeDaysCount }}</strong></span
+              >
+              <span
+                >Estimated weekly hours: <strong>{{ estimatedWeeklyHours }}h</strong></span
+              >
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+}
+
+<app-setup-schedule-days-dialog
+  [visible]="isSetupDialogVisible()"
+  (visibleChange)="closeSetupDialog()"
+  (formSubmit)="onSetupScheduleDaysSubmit($event)"
+/>

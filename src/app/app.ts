@@ -75,7 +75,6 @@ export class App implements OnInit {
       )
       .subscribe({
         next: () => {
-          console.log('What the hell');
           this.store.dispatch(new LoadUser()).subscribe({
             error: (err) => {
               this.handleError(err);

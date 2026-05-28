@@ -1,0 +1,158 @@
+.schedule-container {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+}
+
+.schedule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.schedule-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.break-note {
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+    display: flex;
+    align-items: center;
+}
+
+.day-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.day-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.today-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--primary-color);
+    color: var(--primary-color-text);
+    border-radius: 20px;
+    padding: 1px 8px;
+}
+
+.time-value {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.next-day-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: var(--orange-100);
+    color: var(--orange-700);
+    border-radius: 4px;
+    padding: 1px 5px;
+    cursor: default;
+}
+
+.muted {
+    color: var(--text-color-secondary);
+}
+
+:host ::ng-deep .rest-day-row td {
+    background: var(--surface-ground) !important;
+    opacity: 0.7;
+}
+
+.footer-summary {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+}
+
+.footer-summary strong {
+    color: var(--text-color);
+}
+
+/* Edit dialog */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.25rem 0;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-field label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+}
+
+.form-field-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.form-field-row label {
+    font-size: 0.875rem;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.estimated-hours {
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.estimated-hours strong {
+    color: var(--text-color);
+}
+
+:host ::ng-deep .p-calendar {
+    width: 100%;
+}
+
+/* Schedule Setup */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.empty-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+  margin-top: -0.25rem;
+}

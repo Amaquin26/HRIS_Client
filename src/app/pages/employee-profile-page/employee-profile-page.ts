@@ -13,6 +13,10 @@ import { ActivatedRoute } from '@angular/router';
 import { filter, map, switchMap, tap } from 'rxjs';
 import { EmployeeDto } from '../../models/employee/employee.dto';
 import { formatDate } from '../../utils/date-formatter';
+import { EmployeeScheduleService } from '../../services/employee-schedule-service/employee-schedule-service';
+import { EmployeeSchedule } from '../../models/schedule/employee-schedule.model';
+import { EmployeeScheduleSection } from './components/employee-schedule/employee-schedule-section';
+import { ScheduleDay } from '../../models/schedule/schedule-day.model';
 
 @Component({
   selector: 'app-employee-profile-page',
@@ -25,6 +29,7 @@ import { formatDate } from '../../utils/date-formatter';
     FormsModule,
     ReactiveFormsModule,
     FloatLabelModule,
+    EmployeeScheduleSection,
   ],
   templateUrl: './employee-profile-page.html',
   styleUrl: './employee-profile-page.css',
@@ -33,10 +38,13 @@ import { formatDate } from '../../utils/date-formatter';
 export class EmployeeProfilePage implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly employeeService = inject(EmployeeService);
+  private readonly employeeScheduleService = inject(EmployeeScheduleService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
 
+  employeeId?: number | null = null;
   employeeRecord = signal<EmployeeDto | null>(null);
+  employeeSchedule = signal<EmployeeSchedule | null>(null);
 
   ngOnInit(): void {
     this.route.paramMap
@@ -53,6 +61,7 @@ export class EmployeeProfilePage implements OnInit {
           }
         }),
         filter((id): id is string => !!id && !isNaN(+id)),
+        tap((id) => (this.employeeId = +id)),
         switchMap((id) => this.employeeService.getEmployeeById(+id)),
       )
       .subscribe({
@@ -70,6 +79,8 @@ export class EmployeeProfilePage implements OnInit {
             ...employee,
             hireDate: formatDate(employee.hireDate),
           });
+
+          this.getEmployeeSchedule();
         },
         error: (err) => {
           this.messageService.add({
@@ -81,5 +92,37 @@ export class EmployeeProfilePage implements OnInit {
       });
   }
 
-  onProfileUpload(event: any) {}
+  getEmployeeSchedule() {
+    if (!this.employeeId) return;
+
+    this.employeeScheduleService
+      .getEmployeeSchedule(this.employeeId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (schedule) => {
+          this.employeeSchedule.set(schedule);
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: err?.error?.title ?? 'An error occured',
+            detail: err?.error.detail ?? 'Something went wrong while fetching employee schedule.',
+          });
+        },
+      });
+  }
+
+  onScheduleDaysAdded(scheduleDays: ScheduleDay[]): void {
+    this.employeeSchedule.update(
+      (current) =>
+        ({
+          ...current,
+          scheduleDays,
+        }) as EmployeeSchedule,
+    );
+  }
+
+  onProfileUpload(event: any) {
+    // TODO: add logic for uploading profile to blob storage
+  }
 }
