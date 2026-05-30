@@ -33,7 +33,6 @@ import { ScheduleDay } from '../../models/schedule/schedule-day.model';
   ],
   templateUrl: './employee-profile-page.html',
   styleUrl: './employee-profile-page.css',
-  providers: [MessageService],
 })
 export class EmployeeProfilePage implements OnInit {
   private readonly messageService = inject(MessageService);
@@ -52,7 +51,7 @@ export class EmployeeProfilePage implements OnInit {
         takeUntilDestroyed(this.destroyRef),
         map((params) => params.get('id')),
         tap((id) => {
-          if (!id || !isNaN(+id)) {
+          if (!id || isNaN(+id)) {
             this.messageService.add({
               severity: 'error',
               summary: 'No employee id found!',

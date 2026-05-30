@@ -16,7 +16,6 @@ import { ClearUser, LoadUser } from './states/auth.state';
   imports: [RouterOutlet, HeaderComponent, ToastModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
-  providers: [MessageService],
 })
 export class App implements OnInit {
   protected readonly title = signal('HRIS_Client');

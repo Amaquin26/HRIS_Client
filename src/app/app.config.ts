@@ -25,7 +25,6 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    MessageService,
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi(), withInterceptors([AuthInterceptor])),
@@ -42,6 +41,7 @@ export const appConfig: ApplicationConfig = {
     MsalGuard,
     MsalInterceptor,
     MsalBroadcastService,
+    MessageService,
     provideStore(
       [AuthState],
       withNgxsStoragePlugin({

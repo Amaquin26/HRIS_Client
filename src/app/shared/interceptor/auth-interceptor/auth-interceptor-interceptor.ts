@@ -24,8 +24,8 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err) => {
       messageService.add({
         severity: 'error',
-        summary: 'Connection Error',
-        detail: 'Unable to connect to the server.',
+        summary: 'An error occured',
+        detail: err?.error.detail ?? 'Something went wrong while fetching employee schedule.',
       });
 
       if (err instanceof HttpErrorResponse) {

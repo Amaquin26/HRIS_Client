@@ -127,6 +127,7 @@
       <app-employee-schedule
         [employeeSchedule]="employeeSchedule()!"
         (scheduleDaysAdded)="onScheduleDaysAdded($event)"
+        [employeeId]="employeeId!"
       />
     } @else {
       <p>No Employee Schedule</p>

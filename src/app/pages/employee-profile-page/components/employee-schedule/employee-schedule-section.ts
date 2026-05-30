@@ -20,6 +20,8 @@ import { EmployeeScheduleService } from '../../../../services/employee-schedule-
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormatTimePipePipe } from '../../../../pipes/format-time/format-time-pipe-pipe';
+import { formatTimeOnly } from '../../../../utils/date-formatter';
+import { ScheduleDayWriteDto } from '../../../../models/schedule/schedule-day-write-dto.model';
 
 @Component({
   selector: 'app-employee-schedule',
@@ -45,6 +47,7 @@ import { FormatTimePipePipe } from '../../../../pipes/format-time/format-time-pi
 })
 export class EmployeeScheduleSection {
   employeeSchedule = input.required<EmployeeSchedule>();
+  employeeId = input.required<number>();
   scheduleDaysAdded = output<ScheduleDay[]>();
   editingRowId: number | null = null;
   editingDay: ScheduleDay | null = null;
@@ -59,19 +62,25 @@ export class EmployeeScheduleSection {
   private readonly destroyRef = inject(DestroyRef);
 
   get activeDaysCount(): number {
-    return this.employeeSchedule().scheduleDays.filter((d) => !d.isRestDay).length;
+    const days = this.isEditMode
+      ? Object.values(this.editingDays)
+      : this.employeeSchedule().scheduleDays;
+    return days.filter((d) => !d.isRestDay).length;
   }
 
   get estimatedWeeklyHours(): number {
-    return this.employeeSchedule()
-      .scheduleDays.filter((d) => !d.isRestDay && d.startTime && d.endTime)
+    const days = this.isEditMode
+      ? Object.values(this.editingDays)
+      : this.employeeSchedule().scheduleDays;
+    return days
+      .filter((d) => !d.isRestDay && d.startTime && d.endTime)
       .reduce((sum, d) => sum + this.computeShiftHours(d), 0);
   }
 
   computeShiftHours(day: ScheduleDay): number {
     if (!day.startTime || !day.endTime) return 0;
-    const start = this.timeOnlyToDate(day.startTime).getTime();
-    let end = this.timeOnlyToDate(day.endTime).getTime();
+    const start = new Date(day.startTime).getTime();
+    let end = new Date(day.endTime).getTime();
     if (day.crossesMidnight && end <= start) {
       end += 24 * 60 * 60 * 1000;
     }
@@ -113,12 +122,23 @@ export class EmployeeScheduleSection {
   }
 
   // Edit Mode
+  isInvalidTimeRange(day: ScheduleDay): boolean {
+    if (day.isRestDay || !day.startTime || !day.endTime) return false;
+    const start = new Date(day.startTime).getTime();
+    const end = new Date(day.endTime).getTime();
+    return end <= start && !day.crossesMidnight;
+  }
+
   enterEditMode(): void {
     this.isEditMode = true;
     // snapshot all rows keyed by id
     this.editingDays = this.employeeSchedule().scheduleDays.reduce(
       (acc, day) => {
-        acc[day.id] = { ...day };
+        acc[day.id] = {
+          ...day,
+          startTime: day.startTime ? new Date(day.startTime) : null,
+          endTime: day.endTime ? new Date(day.endTime) : null,
+        };
         return acc;
       },
       {} as Record<number, ScheduleDay>,
@@ -131,11 +151,61 @@ export class EmployeeScheduleSection {
   }
 
   saveAllEdits(): void {
-    const updated = Object.values(this.editingDays);
-    // call your service, then on success:
-    //this.scheduleDaysUpdated.emit(updated);
-    this.isEditMode = false;
-    this.editingDays = {};
+    const days = Object.values(this.editingDays);
+
+    const invalid = days.find((day) => {
+      if (day.isRestDay || !day.startTime || !day.endTime) return false;
+      const start = new Date(day.startTime).getTime();
+      const end = new Date(day.endTime).getTime();
+      return end <= start && !day.crossesMidnight;
+    });
+
+    if (invalid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Invalid schedule',
+        detail: `${invalid.dayName}: end time is before start time. Enable "Crosses Midnight" for night shifts.`,
+      });
+      return;
+    }
+
+    const scheduleDayWriteDto: ScheduleDayWriteDto[] = days.map((d) => {
+      const start = d.startTime ? formatTimeOnly(new Date(d.startTime)) : null;
+      const end = d.endTime ? formatTimeOnly(new Date(d.endTime)) : null;
+
+      return {
+        id: d.id,
+        startTime: start,
+        endTime: end,
+        crossesMidnight: d.crossesMidnight,
+        isRestDay: d.isRestDay,
+      };
+    });
+
+    this.employeeScheduleService
+      .editScheduleDays(this.employeeId(), scheduleDayWriteDto)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (scheduleDays) => {
+          this.isEditMode = false;
+          this.editingDays = {};
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: `Schedule Days updated`,
+          });
+
+          this.scheduleDaysAdded.emit(scheduleDays);
+        },
+        error: (err) => {
+          this.messageService.add({
+            summary: err?.error.title ?? 'Error occured',
+            detail: err?.error.detail ?? 'Something went wrong! Please try again later.',
+            severity: 'error',
+          });
+        },
+      });
   }
 
   private timeOnlyToDate(time: string): Date {

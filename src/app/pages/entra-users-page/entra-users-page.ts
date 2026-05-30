@@ -17,7 +17,6 @@ import { EmployeeStatus } from '../../models/employee/employee-status.model';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { AddEmployeeRecord } from '../../models/employee/add-employee-record';
-import { ProblemDetails } from '../../models/exception/problem-details.model';
 
 @Component({
   selector: 'app-entra-users',
@@ -35,7 +34,6 @@ import { ProblemDetails } from '../../models/exception/problem-details.model';
   ],
   templateUrl: './entra-users-page.html',
   styleUrl: './entra-users-page.css',
-  providers: [MessageService],
 })
 export class EntraUsersPage implements OnInit {
   private readonly employeeService = inject(EmployeeService);

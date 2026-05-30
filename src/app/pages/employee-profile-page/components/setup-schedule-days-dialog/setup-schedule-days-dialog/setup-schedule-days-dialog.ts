@@ -13,6 +13,7 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { AddScheduleDays } from '../../../../../models/schedule/add-schedule-days.model';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { formatTimeOnly } from '../../../../../utils/date-formatter';
 
 @Component({
   selector: 'app-setup-schedule-days-dialog',
@@ -71,8 +72,8 @@ export class SetupScheduleDaysDialog {
 
     const addScheduleDays: AddScheduleDays = {
       scheduleId: 0,
-      startTime: this.formatTimeOnly(scheduleDays.startTime!),
-      endTime: this.formatTimeOnly(scheduleDays.endTime!),
+      startTime: formatTimeOnly(scheduleDays.startTime!),
+      endTime: formatTimeOnly(scheduleDays.endTime!),
       breakMinutes: scheduleDays.breakMinutes!,
       restDays: scheduleDays.restDays ?? [],
     };
@@ -84,11 +85,5 @@ export class SetupScheduleDaysDialog {
 
   onVisibleChange(visibleValue: boolean) {
     this.visibleChange.emit(visibleValue);
-  }
-
-  private formatTimeOnly(date: Date): string {
-    const h = date.getHours().toString().padStart(2, '0');
-    const m = date.getMinutes().toString().padStart(2, '0');
-    return `${h}:${m}:00`;
   }
 }

@@ -4,17 +4,13 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'formatTimePipe',
 })
 export class FormatTimePipePipe implements PipeTransform {
-  transform(value: string): string {
+  transform(value: Date | string | null | undefined): string {
     if (!value) return '';
-
-    const [hours, minutes] = value.split(':');
-
-    let h = +hours;
-    const ampm = h >= 12 ? 'PM' : 'AM';
-
-    h = h % 12;
-    h = h ? h : 12;
-
-    return `${h}:${minutes} ${ampm}`;
+    const date = new Date(value);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
   }
 }

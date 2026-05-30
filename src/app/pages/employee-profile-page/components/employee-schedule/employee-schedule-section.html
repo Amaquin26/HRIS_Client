@@ -73,7 +73,7 @@
       </ng-template>
 
       <ng-template pTemplate="body" let-day>
-        <tr [class.rest-day-row]="day.isRestDay">
+        <tr [class.rest-day-row]="day.isRestDay && !isEditMode">
           <td>
             <div class="day-cell">
               <span class="day-name" [class.muted]="day.isRestDay">{{ day.dayName }}</span>
@@ -135,6 +135,16 @@
             />
           </td>
         </tr>
+        @if (isEditMode && isInvalidTimeRange(editingDays[day.id])) {
+          <tr>
+            <td colspan="6" class="py-1! px-3!">
+              <div class="flex items-center gap-2 text-yellow-700 text-xs">
+                <i class="pi pi-exclamation-triangle text-yellow-500"></i>
+                End time is before start time. Enable "Crosses Midnight" if this is a night shift.
+              </div>
+            </td>
+          </tr>
+        }
       </ng-template>
 
       <ng-template pTemplate="footer">

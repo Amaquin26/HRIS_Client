@@ -32,7 +32,6 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './employees-page.html',
   styleUrl: './employees-page.css',
-  providers: [MessageService],
 })
 export class EmployeesPage implements OnInit {
   private readonly employeeService = inject(EmployeeService);
