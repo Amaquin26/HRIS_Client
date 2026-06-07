@@ -42,7 +42,7 @@ export class CreateRecordDialog {
     email: new FormControl<string>('', [Validators.email, Validators.required]),
     contactNumber: new FormControl<string | null>(null),
     employeeStatusId: new FormControl<number>(1, [Validators.required]),
-    hireDate: new FormControl<Date | string>('', [Validators.required]),
+    hiredDate: new FormControl<Date | string>('', [Validators.required]),
   });
 
   onVisibleChange(visibleValue: boolean) {
@@ -79,8 +79,8 @@ export class CreateRecordDialog {
 
     const employeeRecord = this.employeeRecordForm.value;
 
-    if (employeeRecord.hireDate && employeeRecord.hireDate instanceof Date) {
-      employeeRecord.hireDate = employeeRecord.hireDate.toISOString();
+    if (employeeRecord.hiredDate && employeeRecord.hiredDate instanceof Date) {
+      employeeRecord.hiredDate = employeeRecord.hiredDate.toISOString();
     }
 
     const addEmployeeRecord: AddEmployeeRecord = {
@@ -90,7 +90,7 @@ export class CreateRecordDialog {
       email: employeeRecord.email!.trim(),
       contactNumber: employeeRecord.contactNumber,
       employeeStatusId: employeeRecord.employeeStatusId!,
-      hireDate: employeeRecord.hireDate!,
+      hiredDate: employeeRecord.hiredDate!,
     };
 
     this.formSubmit.emit(addEmployeeRecord);

@@ -76,7 +76,7 @@ export class EmployeeProfilePage implements OnInit {
 
           this.employeeRecord.set({
             ...employee,
-            hireDate: formatDate(employee.hireDate),
+            hiredDate: formatDate(employee.hiredDate),
           });
 
           this.getEmployeeSchedule();
@@ -85,7 +85,7 @@ export class EmployeeProfilePage implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: err?.error?.title ?? 'An error occured',
-            detail: err?.error.detail ?? 'Something went wrong while processing your request.',
+            detail: err?.error?.detail ?? 'Something went wrong while processing your request.',
           });
         },
       });
@@ -105,7 +105,7 @@ export class EmployeeProfilePage implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: err?.error?.title ?? 'An error occured',
-            detail: err?.error.detail ?? 'Something went wrong while fetching employee schedule.',
+            detail: err?.error?.detail ?? 'Something went wrong while fetching employee schedule.',
           });
         },
       });

@@ -19,9 +19,9 @@ import { AddScheduleDays } from '../../../../models/schedule/add-schedule-days.m
 import { EmployeeScheduleService } from '../../../../services/employee-schedule-service/employee-schedule-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { FormatTimePipePipe } from '../../../../pipes/format-time/format-time-pipe-pipe';
 import { formatTimeOnly } from '../../../../utils/date-formatter';
 import { ScheduleDayWriteDto } from '../../../../models/schedule/schedule-day-write-dto.model';
+import { FormatTimePipe } from '../../../../pipes/format-time/format-time-pipe';
 
 @Component({
   selector: 'app-employee-schedule',
@@ -40,7 +40,7 @@ import { ScheduleDayWriteDto } from '../../../../models/schedule/schedule-day-wr
     DividerModule,
     SetupScheduleDaysDialog,
     InputNumberModule,
-    FormatTimePipePipe,
+    FormatTimePipe,
   ],
   templateUrl: './employee-schedule-section.html',
   styleUrl: './employee-schedule-section.css',
@@ -201,7 +201,7 @@ export class EmployeeScheduleSection {
         error: (err) => {
           this.messageService.add({
             summary: err?.error.title ?? 'Error occured',
-            detail: err?.error.detail ?? 'Something went wrong! Please try again later.',
+            detail: err?.error?.detail ?? 'Something went wrong! Please try again later.',
             severity: 'error',
           });
         },

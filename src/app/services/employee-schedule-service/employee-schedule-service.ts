@@ -6,6 +6,8 @@ import { EmployeeSchedule } from '../../models/schedule/employee-schedule.model'
 import { AddScheduleDays } from '../../models/schedule/add-schedule-days.model';
 import { ScheduleDay } from '../../models/schedule/schedule-day.model';
 import { ScheduleDayWriteDto } from '../../models/schedule/schedule-day-write-dto.model';
+import { EmployeeScheduleDetailDto } from '../../models/schedule/employee-schedule-detail-dto.model';
+import { ShiftRecord } from '../../models/schedule/shift-record.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +20,12 @@ export class EmployeeScheduleService {
   getEmployeeSchedule(employeeId: number): Observable<EmployeeSchedule | null> {
     return this.httpClient.get<EmployeeSchedule | null>(
       `${this.employeeScheduleApi}/${employeeId}`,
+    );
+  }
+
+  getShiftDetail(): Observable<EmployeeScheduleDetailDto> {
+    return this.httpClient.get<EmployeeScheduleDetailDto>(
+      `${this.employeeScheduleApi}/shift-detail`,
     );
   }
 
@@ -36,5 +44,17 @@ export class EmployeeScheduleService {
       `${this.employeeScheduleApi}/${employeeId}/schedule-days`,
       scheduleDays,
     );
+  }
+
+  clockIn(): Observable<ShiftRecord> {
+    return this.httpClient.post<ShiftRecord>(`${this.employeeScheduleApi}/clock-in`, {});
+  }
+
+  clockOut(): Observable<void> {
+    return this.httpClient.post<void>(`${this.employeeScheduleApi}/clock-out`, {});
+  }
+
+  undoClockOut(): Observable<void> {
+    return this.httpClient.post<void>(`${this.employeeScheduleApi}/clock-out/undo`, {});
   }
 }

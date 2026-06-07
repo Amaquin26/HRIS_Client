@@ -1,0 +1,198 @@
+<p-toast position="top-right" />
+
+<div class="clock-page">
+  <!-- Header -->
+  <div class="clock-page-header">
+    <div>
+      <h2 class="clock-greeting">{{ greeting }}, {{ employeeName }}</h2>
+      <p class="clock-date">{{ today | date: 'EEEE, MMMM d, yyyy' }}</p>
+    </div>
+    @if (scheduleSummary()?.todaySchedule && !scheduleSummary()!.todaySchedule?.isRestDay) {
+      <div class="scheduled-badge">
+        <i class="pi pi-calendar text-xs"></i>
+        <span
+          >Scheduled {{ scheduleSummary()!.todaySchedule!.startTime | formatTimePipe }} –
+          {{ scheduleSummary()!.todaySchedule!.endTime | formatTimePipe }}</span
+        >
+      </div>
+    }
+    @if (scheduleSummary()?.todaySchedule?.isRestDay) {
+      <div class="rest-day-badge">
+        <i class="pi pi-moon text-xs"></i>
+        <span>Rest day</span>
+      </div>
+    }
+  </div>
+
+  <!-- Main clock card -->
+  <div
+    class="clock-card"
+    [class.clock-card--in]="isClockedIn()"
+    [class.clock-card--out]="!isClockedIn()"
+  >
+    <!-- Pulsing ring when clocked in -->
+    @if (isClockedIn()) {
+      <div class="pulse-ring"></div>
+    }
+
+    <!-- Status -->
+    <div class="clock-status">
+      <span class="status-dot" [class.status-dot--in]="isClockedIn()"></span>
+      <span class="status-label">{{
+        isClockedIn() ? 'Currently clocked in' : 'Not clocked in'
+      }}</span>
+    </div>
+
+    <!-- Elapsed timer -->
+    @if (isClockedIn()) {
+      <div class="clock-timer">
+        {{ elapsedTime() }}
+      </div>
+    }
+
+    @if (!isClockedIn() && !todayShift()) {
+      <div class="clock-timer clock-timer--idle">--:--:--</div>
+    }
+
+    <!-- Completed shift duration -->
+    @if (!isClockedIn() && todayShift()?.clockOut) {
+      <div class="clock-timer clock-timer--done">
+        {{ completedDuration() }}
+        <span class="clock-timer-label">total today</span>
+      </div>
+    }
+
+    <!-- Clock in/out time stamps -->
+    @if (todayShift()) {
+      <div class="clock-stamps">
+        <div class="stamp">
+          <span class="stamp-label">Clocked in</span>
+          <span class="stamp-value">{{
+            todayShift()!.clockIn ? (todayShift()!.clockIn | date: 'h:mm a') : '—'
+          }}</span>
+        </div>
+        <div class="stamp-divider"></div>
+        <div class="stamp">
+          <span class="stamp-label">Clocked out</span>
+          <span class="stamp-value">{{
+            todayShift()!.clockOut ? (todayShift()!.clockOut | date: 'h:mm a') : '—'
+          }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Main action button -->
+    <button
+      class="clock-btn"
+      [class.clock-btn--in]="!isClockedIn()"
+      [class.clock-btn--out]="isClockedIn()"
+      [disabled]="isLoading()"
+      (click)="isClockedIn() ? openClockOutDialog() : clockIn()"
+    >
+      <i class="pi" [class.pi-play]="!isClockedIn()" [class.pi-stop]="isClockedIn()"></i>
+      {{ isClockedIn() ? 'Clock out' : 'Clock in' }}
+    </button>
+
+    <!-- Flagged warning -->
+    @if (todayShift()?.isFlagged) {
+      <div class="flagged-notice">
+        <i class="pi pi-flag text-yellow-500"></i>
+        <span>{{ todayShift()?.flagReason ?? 'Shift flagged for review' }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Undo banner -->
+  @if (showUndoBanner()) {
+    <div class="undo-banner">
+      <div class="undo-left">
+        <i class="pi pi-info-circle"></i>
+        <span
+          >Clocked out accidentally? You have <strong>{{ undoCountdown() }}s</strong> to undo.</span
+        >
+      </div>
+      <button class="undo-btn" (click)="undoClockOut()"><i class="pi pi-replay"></i> Undo</button>
+    </div>
+  }
+
+  <!-- Recent shifts -->
+  <div class="recent-shifts">
+    <h3 class="recent-title">Recent shifts</h3>
+
+    @if (!scheduleSummary()?.recentShifts) {
+      <div class="shift-list">
+        <div class="shift-row" *ngFor="let i of [1, 2, 3, 4, 5]">
+          <p-skeleton width="80px" height="14px" />
+          <p-skeleton width="60px" height="14px" />
+          <p-skeleton width="60px" height="14px" />
+          <p-skeleton width="50px" height="20px" borderRadius="20px" />
+        </div>
+      </div>
+    }
+
+    @if (scheduleSummary()?.recentShifts) {
+      <div class="shift-list">
+        @if (scheduleSummary()!.recentShifts.length === 0) {
+          <div class="shift-empty">No recent shifts found.</div>
+        }
+
+        @for (shift of scheduleSummary()!.recentShifts; track shift) {
+          <div class="shift-row">
+            <span class="shift-date">{{ shift.shiftDate | date: 'EEE, MMM d' }}</span>
+            <span class="shift-time">{{ shift.clockIn | date: 'h:mm a' }}</span>
+            <span class="shift-time">{{
+              shift.clockOut ? (shift.clockOut | date: 'h:mm a') : '—'
+            }}</span>
+            @if (shift.clockOut && shift.clockIn) {
+              <div class="shift-duration">
+                {{ computeDuration(shift.clockIn, shift.clockOut!) }}
+              </div>
+            }
+
+            @if (shift.isMissing) {
+              <p-tag value="Missing" severity="danger" [rounded]="true" styleClass="text-xs" />
+            }
+
+            @if (shift.isFlagged) {
+              <p-tag value="Flagged" severity="warn" [rounded]="true" styleClass="text-xs" />
+            }
+
+            @if (!shift.isFlagged && shift.status === shiftStatus.Completed) {
+              <p-tag value="Done" severity="success" [rounded]="true" styleClass="text-xs" />
+            }
+
+            @if (!shift.isFlagged && shift.status === shiftStatus.Open) {
+              <p-tag value="Open" severity="info" [rounded]="true" styleClass="text-xs" />
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Clock out confirmation dialog -->
+<p-dialog
+  [(visible)]="clockOutDialogVisible"
+  header="Clock out"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '360px' }"
+>
+  <div class="clockout-confirm">
+    <p>You have been clocked in for</p>
+    <div class="clockout-duration">{{ elapsedTime() }}</div>
+    <p class="clockout-hint">Are you sure you want to clock out?</p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      [text]="true"
+      (onClick)="clockOutDialogVisible = false"
+    />
+    <p-button label="Yes, clock out" icon="pi pi-stop" severity="danger" (onClick)="clockOut()" />
+  </ng-template>
+</p-dialog>

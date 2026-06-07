@@ -92,7 +92,7 @@ export class App implements OnInit {
 
     this.messageService.add({
       summary: err?.error.title ?? 'Error occured',
-      detail: err?.error.detail ?? 'Something went wrong! Please try again later.',
+      detail: err?.error?.detail ?? 'Something went wrong! Please try again later.',
       severity: 'error',
     });
 

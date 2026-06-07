@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
+import { ClockInClockOut } from './components/clock-in-clock-out/clock-in-clock-out';
 
 @Component({
   selector: 'app-home',
-  imports: [ButtonModule],
+  imports: [ClockInClockOut],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
-
-}
+export class Home {}

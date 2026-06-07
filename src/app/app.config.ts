@@ -1,4 +1,9 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
@@ -37,6 +42,11 @@ export const appConfig: ApplicationConfig = {
       provide: MSAL_INSTANCE,
       useFactory: MSALInstanceFactory,
     },
+    provideAppInitializer(() => {
+      const msalService = inject(MsalService);
+
+      return msalService.instance.initialize();
+    }),
     MsalService,
     MsalGuard,
     MsalInterceptor,

@@ -40,7 +40,7 @@
           <td>{{ employee.lastName }}</td>
           <td>{{ employee.email }}</td>
           <td>{{ employee.contactNumber }}</td>
-          <td>{{ employee.hireDate | formatDate: 'MMM dd, yyyy' }}</td>
+          <td>{{ employee.hiredDate | formatDate: 'MMM dd, yyyy' }}</td>
           <td>{{ employee.employeeStatusName }}</td>
           <td>
             <button pButton size="small" (click)="navigateToEmployeeProfile(employee.id)">

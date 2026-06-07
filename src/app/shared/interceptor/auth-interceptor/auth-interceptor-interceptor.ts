@@ -25,7 +25,7 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
       messageService.add({
         severity: 'error',
         summary: 'An error occured',
-        detail: err?.error.detail ?? 'Something went wrong while fetching employee schedule.',
+        detail: err?.error?.detail ?? 'Something went wrong while fetching employee schedule.',
       });
 
       if (err instanceof HttpErrorResponse) {
